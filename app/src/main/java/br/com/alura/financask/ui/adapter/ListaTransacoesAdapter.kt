@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import br.com.alura.financask.R
+import br.com.alura.financask.model.Transacao
+import kotlinx.android.synthetic.main.transacao_item.view.*
 
 class ListaTransacoesAdapter(
-    transacoes: List<String>,
+    transacoes: List<Transacao>,
     context: Context
 ) : BaseAdapter() {
 
@@ -16,11 +18,16 @@ class ListaTransacoesAdapter(
     private val context = context
 
     override fun getView(posicao: Int, view: View?, parent: ViewGroup?): View {
-        return LayoutInflater
+        val viewCriada = LayoutInflater
             .from(context).inflate(R.layout.transacao_item, parent, false)
+
+        val transacao = transacoes[posicao]
+        viewCriada.transacao_valor.setText(transacao.getValor().toString())
+
+        return viewCriada
     }
 
-    override fun getItem(positicao: Int): String {
+    override fun getItem(positicao: Int): Transacao {
         return transacoes[positicao]
     }
 
