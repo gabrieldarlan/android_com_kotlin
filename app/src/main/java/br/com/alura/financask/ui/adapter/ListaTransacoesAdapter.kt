@@ -53,13 +53,18 @@ class ListaTransacoesAdapter(
         transacao: Transacao,
         viewCriada: View
     ) {
-        if (transacao.tipo == Tipo.RECEITA) {
-            viewCriada.transacao_icone
-                .setBackgroundResource(R.drawable.icone_transacao_item_receita)
-        } else {
-            viewCriada.transacao_icone
-                .setBackgroundResource(R.drawable.icone_transacao_item_despesa)
+        val icone = iconePor(transacao.tipo)
+
+        viewCriada.transacao_icone
+            .setBackgroundResource(icone)
+    }
+
+    private fun iconePor(tipo: Tipo): Int {
+        if (tipo == Tipo.RECEITA) {
+            return R.drawable.icone_transacao_item_receita
         }
+
+        return R.drawable.icone_transacao_item_despesa
     }
 
     private fun adicionaValor(
