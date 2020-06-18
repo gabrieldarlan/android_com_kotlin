@@ -1,7 +1,6 @@
 package br.com.alura.financask.ui.activity
 
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import br.com.alura.financask.R
 import br.com.alura.financask.model.Tipo
@@ -9,16 +8,25 @@ import br.com.alura.financask.model.Transacao
 import br.com.alura.financask.ui.adapter.ListaTransacoesAdapter
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
 import java.math.BigDecimal
-import java.util.*
 
 
 class ListaTransacoesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        title = "Financask"
         setContentView(R.layout.activity_lista_transacoes)
 
+        val transacoes: List<Transacao> = transacoesDeExemplo()
+
+        configuraLista(transacoes)
+
+    }
+
+    private fun configuraLista(transacoes: List<Transacao>) {
+        lista_transacoes_listview.adapter = ListaTransacoesAdapter(transacoes, this)
+    }
+
+    private fun transacoesDeExemplo(): List<Transacao> {
         val transacoes = listOf(
             Transacao(
                 valor = BigDecimal(20.5),
@@ -37,7 +45,6 @@ class ListaTransacoesActivity : AppCompatActivity() {
                 tipo = Tipo.RECEITA
             )
         )
-        lista_transacoes_listview.adapter = ListaTransacoesAdapter(transacoes, this)
-
+        return transacoes
     }
 }
