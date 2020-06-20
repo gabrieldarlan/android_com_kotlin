@@ -24,42 +24,50 @@ class AdicionaTransacaoDialog(
 ) {
 
     private val viewCriada = criaLayout()
+    private val campoValor = viewCriada.form_transacao_valor
+    private val campoData = viewCriada.form_transacao_data
+    private val campoCategoria = viewCriada.form_transacao_categoria
 
-    fun configuraDialog(transacaoDelegate: TransacaoDelegate) {
+    fun chama(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
         configuraCampoData()
-        configuraCampoCategoria()
-        configuraFormulario(transacaoDelegate)
+        configuraCampoCategoria(tipo)
+        configuraFormulario(tipo, transacaoDelegate)
     }
 
-    private fun configuraFormulario(transacaoDelegate: TransacaoDelegate) {
+    private fun configuraFormulario(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
+        val titulo = tituloPorTipo(tipo)
+
         AlertDialog.Builder(context)
-            .setTitle(R.string.adiciona_receita)
+            .setTitle(titulo)
             .setView(viewCriada)
             .setPositiveButton(
                 "Adicionar"
             ) { _, _ ->
 
-                val valorEmTexto = viewCriada.form_transacao_valor.text.toString()
-                val dataEmTexto = viewCriada.form_transacao_data.text.toString()
-                val categoriaEmTexto =
-                    viewCriada.form_transacao_categoria.selectedItem.toString()
+                val valorEmTexto = campoValor.text.toString()
+                val dataEmTexto = campoData.text.toString()
+                val categoriaEmTexto = campoCategoria.selectedItem.toString()
                 val valor = converteCampoValor(valorEmTexto)
                 val data = dataEmTexto.converteParaCalendar()
 
-
                 val transacaoCriada = Transacao(
-                    tipo = Tipo.RECEITA,
+                    tipo = tipo,
                     valor = valor,
                     data = data,
                     categoria = categoriaEmTexto
                 )
 
                 transacaoDelegate.delegate(transacaoCriada)
-//                atualizaTransacoes(transacaoCriada)
-//                lista_transacoes_adiciona_menu.close(true)
             }
             .setNegativeButton("Cancelar", null)
             .show()
+    }
+
+    private fun tituloPorTipo(tipo: Tipo): Int {
+        if (tipo == Tipo.RECEITA) {
+            return R.string.adiciona_receita
+        }
+        return R.string.adiciona_despesa
     }
 
 
@@ -76,15 +84,25 @@ class AdicionaTransacaoDialog(
         }
     }
 
-    private fun configuraCampoCategoria() {
+    private fun configuraCampoCategoria(tipo: Tipo) {
+
+        val categorias = categoriasPorTipo(tipo)
+
         val adapter = ArrayAdapter
             .createFromResource(
                 context,
-                R.array.categorias_de_receita,
+                categorias,
                 android.R.layout.simple_spinner_dropdown_item
             )
 
-        viewCriada.form_transacao_categoria.adapter = adapter
+        campoCategoria.adapter = adapter
+    }
+
+    private fun categoriasPorTipo(tipo: Tipo): Int {
+        if (tipo == Tipo.RECEITA) {
+            return R.array.categorias_de_receita
+        }
+        return R.array.categorias_de_despesa
     }
 
     private fun configuraCampoData() {
@@ -94,16 +112,14 @@ class AdicionaTransacaoDialog(
         val mes = hoje.get(Calendar.MONTH)
         val dia = hoje.get(Calendar.DAY_OF_MONTH)
 
-        viewCriada.form_transacao_data
-            .setText(hoje.formataParaBrasileiro())
-
-        viewCriada.form_transacao_data.setOnClickListener {
+        campoData.setText(hoje.formataParaBrasileiro())
+        campoData.setOnClickListener {
             DatePickerDialog(
                 context,
                 DatePickerDialog.OnDateSetListener { _, ano, mes, dia ->
                     val dataSelecionada = Calendar.getInstance()
                     dataSelecionada.set(ano, mes, dia)
-                    viewCriada.form_transacao_data.setText(
+                    campoData.setText(
                         dataSelecionada
                             .formataParaBrasileiro()
                     )
