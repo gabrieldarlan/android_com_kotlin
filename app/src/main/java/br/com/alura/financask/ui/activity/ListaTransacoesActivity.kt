@@ -1,6 +1,7 @@
 package br.com.alura.financask.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -13,18 +14,19 @@ import br.com.alura.financask.ui.adapter.ListaTransacoesAdapter
 import br.com.alura.financask.ui.dialog.AdicionaTransacaoDialog
 import br.com.alura.financask.ui.dialog.AlteraTransacaoDialog
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
+import kotlin.math.log
 
 
 class ListaTransacoesActivity : AppCompatActivity() {
 
     private val transacoes: MutableList<Transacao> = mutableListOf()
-    private var viewDaActivity: View? = null
+    private val viewDaActivity by lazy {
+        window.decorView
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_transacoes)
-
-//        viewDaActivity = window.decorView
 
         configuraResumo()
         configuraLista()
@@ -57,12 +59,10 @@ class ListaTransacoesActivity : AppCompatActivity() {
         })
     }
 
-
     private fun adiciona(transacao: Transacao) {
         transacoes.add(transacao)
         atualizaTransacoes()
     }
-
 
     private fun atualizaTransacoes() {
         configuraLista()
