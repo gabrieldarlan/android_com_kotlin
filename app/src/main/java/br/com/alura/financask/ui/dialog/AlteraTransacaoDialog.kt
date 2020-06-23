@@ -3,7 +3,6 @@ package br.com.alura.financask.ui.dialog
 import android.content.Context
 import android.view.ViewGroup
 import br.com.alura.financask.R
-import br.com.alura.financask.delegate.TransacaoDelegate
 import br.com.alura.financask.extension.formataParaBrasileiro
 import br.com.alura.financask.model.Tipo
 import br.com.alura.financask.model.Transacao
