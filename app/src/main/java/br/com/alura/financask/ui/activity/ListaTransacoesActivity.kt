@@ -1,7 +1,6 @@
 package br.com.alura.financask.ui.activity
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +13,6 @@ import br.com.alura.financask.ui.adapter.ListaTransacoesAdapter
 import br.com.alura.financask.ui.dialog.AdicionaTransacaoDialog
 import br.com.alura.financask.ui.dialog.AlteraTransacaoDialog
 import kotlinx.android.synthetic.main.activity_lista_transacoes.*
-import kotlin.math.log
 
 
 class ListaTransacoesActivity : AppCompatActivity() {
@@ -32,7 +30,6 @@ class ListaTransacoesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_transacoes)
-
         configuraResumo()
         configuraLista()
         configuraFab()
@@ -52,29 +49,37 @@ class ListaTransacoesActivity : AppCompatActivity() {
             }
     }
 
+    private fun chamaDialogDeAlteracao(
+        transacao: Transacao,
+        posicao: Int
+    ) {
+        AlteraTransacaoDialog(viewGroupDaActivity, this)
+            .chama(transacao) {
+                altera(transacao, posicao)
+            }
+    }
+
     private fun chamaDialogDeAdicao(tipo: Tipo) {
         AdicionaTransacaoDialog(
             viewGroupDaActivity,
             this
-        ).chama(tipo, object : TransacaoDelegate {
-            override fun delegate(transacao: Transacao) {
-                adiciona(transacao)
-                lista_transacoes_adiciona_menu.close(true)
-            }
-        })
+        ).chama(tipo) {
+            adiciona(it)
+            lista_transacoes_adiciona_menu.close(true)
+        }
     }
 
     private fun adiciona(transacao: Transacao) {
         transacoes.add(transacao)
         atualizaTransacoes()
     }
+
     private fun atualizaTransacoes() {
         configuraLista()
         configuraResumo()
     }
 
     private fun configuraResumo() {
-        val view: View? = viewDaActivity
         val resumoView = ResumoView(this, viewDaActivity, transacoes)
         resumoView.atualiza()
     }
@@ -90,19 +95,6 @@ class ListaTransacoesActivity : AppCompatActivity() {
         }
     }
 
-
-    private fun chamaDialogDeAlteracao(
-        transacao: Transacao,
-        posicao: Int
-    ) {
-        AlteraTransacaoDialog(viewGroupDaActivity, this)
-            .chama(transacao, object : TransacaoDelegate {
-                override fun delegate(transacao: Transacao) {
-                    altera(transacao, posicao)
-                }
-
-            })
-    }
 
     private fun altera(transacao: Transacao, posicao: Int) {
         transacoes[posicao] = transacao

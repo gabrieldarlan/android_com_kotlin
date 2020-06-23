@@ -29,14 +29,14 @@ abstract class FormularioTransacaoDialog(
     protected val campoCategoria = viewCriada.form_transacao_categoria
     abstract protected val tituloBotaoPositivo: String
 
-    fun chama(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
+    fun chama(tipo: Tipo, delegate: (transacao: Transacao) -> Unit) {
         configuraCampoData()
         configuraCampoCategoria(tipo)
-        configuraFormulario(tipo, transacaoDelegate)
+        configuraFormulario(tipo, delegate)
     }
 
 
-    private fun configuraFormulario(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
+    private fun configuraFormulario(tipo: Tipo, delegate: (transacao: Transacao) -> Unit) {
         val titulo = tituloPorTipo(tipo)
 
         AlertDialog.Builder(context)
@@ -59,7 +59,7 @@ abstract class FormularioTransacaoDialog(
                     categoria = categoriaEmTexto
                 )
 
-                transacaoDelegate.delegate(transacaoCriada)
+                delegate(transacaoCriada)
             }
             .setNegativeButton("Cancelar", null)
             .show()
