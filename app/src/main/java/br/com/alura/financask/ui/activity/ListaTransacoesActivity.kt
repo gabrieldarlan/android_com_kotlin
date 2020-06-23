@@ -68,7 +68,6 @@ class ListaTransacoesActivity : AppCompatActivity() {
         transacoes.add(transacao)
         atualizaTransacoes()
     }
-
     private fun atualizaTransacoes() {
         configuraLista()
         configuraResumo()

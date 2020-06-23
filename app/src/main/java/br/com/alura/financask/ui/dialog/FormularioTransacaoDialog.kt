@@ -18,29 +18,23 @@ import kotlinx.android.synthetic.main.form_transacao.view.*
 import java.math.BigDecimal
 import java.util.*
 
-open class FormularioTransacaoDialog(
+abstract class FormularioTransacaoDialog(
     private val context: Context,
     private val viewGroup: ViewGroup?
 ) {
 
     private val viewCriada = criaLayout()
-    private val campoValor = viewCriada.form_transacao_valor
-    private val campoData = viewCriada.form_transacao_data
-    private val campoCategoria = viewCriada.form_transacao_categoria
+    protected val campoValor = viewCriada.form_transacao_valor
+    protected val campoData = viewCriada.form_transacao_data
+    protected val campoCategoria = viewCriada.form_transacao_categoria
+    abstract protected val tituloBotaoPositivo: String
 
-    fun chama(transacao: Transacao, transacaoDelegate: TransacaoDelegate) {
-        val tipo = transacao.tipo
+    fun chama(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
         configuraCampoData()
         configuraCampoCategoria(tipo)
         configuraFormulario(tipo, transacaoDelegate)
-
-        campoValor.setText(transacao.valor.toString())
-        campoData.setText(transacao.data.formataParaBrasileiro())
-        val categoriasRetornadas = context.resources.getStringArray(categoriasPorTipo(tipo))
-        val posicaoCategoria = categoriasRetornadas.indexOf(transacao.categoria)
-        campoCategoria.setSelection(posicaoCategoria, true)
-
     }
+
 
     private fun configuraFormulario(tipo: Tipo, transacaoDelegate: TransacaoDelegate) {
         val titulo = tituloPorTipo(tipo)
@@ -49,7 +43,7 @@ open class FormularioTransacaoDialog(
             .setTitle(titulo)
             .setView(viewCriada)
             .setPositiveButton(
-                "Alterar"
+                tituloBotaoPositivo
             ) { _, _ ->
 
                 val valorEmTexto = campoValor.text.toString()
@@ -71,12 +65,8 @@ open class FormularioTransacaoDialog(
             .show()
     }
 
-    private fun tituloPorTipo(tipo: Tipo): Int {
-        if (tipo == Tipo.RECEITA) {
-            return R.string.altera_receita
-        }
-        return R.string.altera_despesa
-    }
+    abstract protected fun tituloPorTipo(tipo: Tipo): Int
+
 
     private fun converteCampoValor(valorEmTexto: String): BigDecimal {
         return try {
@@ -105,7 +95,7 @@ open class FormularioTransacaoDialog(
         campoCategoria.adapter = adapter
     }
 
-    private fun categoriasPorTipo(tipo: Tipo): Int {
+    protected fun categoriasPorTipo(tipo: Tipo): Int {
         if (tipo == Tipo.RECEITA) {
             return R.array.categorias_de_receita
         }
